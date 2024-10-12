@@ -1,6 +1,6 @@
 // Import the axios library using ES module syntax
 import axios from 'axios';
-import telnyxApiKey from '/key.js';
+import { telnyxApiKey } from './key.js';
 
 // Define the Telnyx API key
 
@@ -16,6 +16,10 @@ const contacts = [
   {
     name: 'Joel Jaison',
     phone: '+14084761753'
+  },
+  {
+    name: 'Pruthvi',
+    phone: '+15105054274'
   }
 ];
 

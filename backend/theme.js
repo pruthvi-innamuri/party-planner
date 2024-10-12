@@ -1,7 +1,7 @@
 import OpenAI from "openai";
-import {openai_key} from "./key.js";
+import { openai_key } from "./key.js";
 
-const openai = new OpenAI(openai_key);
+const openai = new OpenAI({ apiKey: openai_key });
 
 const generateTheme = async (themeDescription) => {
   try {
@@ -20,4 +20,4 @@ const generateTheme = async (themeDescription) => {
 };
 
 // Generate the theme and save the image
-generateTheme("Create a party invite with a tropical theme");
+generateTheme("Create a party invite with a school theme. don't include any text in the image");
