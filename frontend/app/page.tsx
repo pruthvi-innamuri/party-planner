@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label"
 import { MessageCircle, Music, Send, UserPlus, Clock, Plus, Trash2 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
+import { recordingHandler } from './recordingHandler'
 
 type Guest = {
   name: string;
@@ -31,6 +32,9 @@ type Event = {
 
 export default function PartyPlanningDashboard() {
   const [isAgentActive, setIsAgentActive] = useState(false)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
   const [guestList, setGuestList] = useState<Guest[]>([
     { name: 'Alice', email: 'alice@example.com' },
     { name: 'Bob', email: 'bob@example.com' },
@@ -85,29 +89,13 @@ export default function PartyPlanningDashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="flex justify-between items-center p-4 bg-white shadow-md">
           <h1 className="text-2xl font-bold">Party Planning Dashboard</h1>
-          <Button onClick={() => setIsAgentActive(!isAgentActive)}>
+          <Button onClick={() => recordingHandler(mediaRecorderRef, streamRef, chunksRef, isAgentActive, setIsAgentActive)}>
             {isAgentActive ? 'Deactivate Agent' : 'Activate Agent'}
             <MessageCircle className="ml-2 h-4 w-4" />
           </Button>
         </header>
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4">
-          {isAgentActive && (
-            <Card className="mb-4">
-              <CardHeader>
-                <CardTitle>Party Planning Agent</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center space-x-2">
-                  <Input placeholder="Ask me anything about party planning..." />
-                  <Button size="icon">
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
           <div className="grid grid-cols-2 gap-4">
             <Card>
               <CardHeader>
