@@ -18,10 +18,7 @@ async function generateOutput {
 
 }
 
-async function processAudio() {
-    const transcript = await getTranscript();
     await handleUserQuery(transcript);
-}
 
 // for testing
 (async() => {

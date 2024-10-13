@@ -4,7 +4,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({ apiKey: openai_key });
 
-async function handleUserQuery(userQuery) {
+export async function handleUserQuery(userQuery) {
     try {
         const completion = await openai.chat.completions.create({
             model: "gpt-4",
@@ -107,4 +107,3 @@ async function callFunctions(toolCalls) {
     // Return the results
     return results;
 }
-  
