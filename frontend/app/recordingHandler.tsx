@@ -1,7 +1,25 @@
 import { useState, useRef } from 'react';
 import { openai_key } from './keys';
 
-export const recordingHandler = (mediaRecorderRef: React.MutableRefObject<MediaRecorder | null>, streamRef: React.MutableRefObject<MediaStream | null>, chunksRef: React.MutableRefObject<Blob[]>, isAgentActive: boolean, setIsAgentActive: (value: boolean) => void) => {
+type Guest = {
+  name: string;
+  email: string;
+}
+
+type Venue = {
+  name: string;
+  description: string;
+}
+
+type Event = {
+  id: string;
+  title: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+}
+
+export const recordingHandler = (mediaRecorderRef: React.MutableRefObject<MediaRecorder | null>, streamRef: React.MutableRefObject<MediaStream | null>, chunksRef: React.MutableRefObject<Blob[]>, isAgentActive: boolean, setIsAgentActive: (value: boolean) => void, setVenues: (value: Venue[]) => void, setEvents: (value: Event[]) => void, setGuestList: (value: Guest[]) => void, setImageUrl: (value: string) => void, setSpotifyPlaylistUrl: (value: boolean) => void) => {
     if (isAgentActive) {
       // Stop recording
       if (mediaRecorderRef.current) {
@@ -54,6 +72,45 @@ export const recordingHandler = (mediaRecorderRef: React.MutableRefObject<MediaR
                   }
               
                   const data = await response.json();
+                  // Send the transcribed text to the backend
+                  try {
+                    const backendResponse = await fetch('http://localhost:3001/plan-party', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ transcription: data.text }),
+                    });
+                    
+                    const backendPayload = await backendResponse.json();
+                    console.log('Backend payload:', backendPayload);
+                    if (backendPayload.result.name === "search_places") {
+                      const formattedVenues = backendPayload.result.result.map((venue: any) => ({
+                        name: venue.name,
+                        description: venue.address || 'No description available.'
+                      }));
+                      console.log('Formatted venues:', formattedVenues);
+                      setVenues(formattedVenues);
+                    } else if (backendPayload.result.name == "generateTheme") {
+                      setSpotifyPlaylistUrl(true);
+                      const url = backendPayload.result.result;
+                      setImageUrl(url);
+                    } else if (backendPayload.result.name == "generatePartyEvents") {
+                      console.log('Generating events!!!!!!');
+                      console.log(backendPayload.result.result);
+                      const events = backendPayload.result.result;
+                      setEvents(events);
+                    }
+
+            
+                    console.log('Backend payload:', backendPayload);
+                    if (!backendResponse.ok) {
+                      throw new Error('Failed to send transcription to backend');
+                    }
+
+                  } catch (backendError) {
+                    console.error('Error sending transcription to backend:', backendError);
+                  }
                   console.log('Transcription:', data.text);
                 } catch (error) {
                   console.error('Error transcribing audio:', error);

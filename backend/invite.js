@@ -27,7 +27,7 @@ const contacts = [
 async function sendMessages() {
   for (const contact of contacts) {
     // Create a personalized message
-    const messageText = `Hey ${contact.name}! How's it going? My birthday is coming up and you're invited to the party on Saturday at 7 PM at my place. Let me know if you can make it!`;
+    const messageText = `Hey There! How's it going? My birthday is coming up and you're invited to the party on Saturday at 7 PM at my place. Let me know if you can make it!`;
 
     // Define the request payload
     const messageData = {

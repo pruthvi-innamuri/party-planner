@@ -36,4 +36,4 @@ yarn-error.log*
 next-env.d.ts
 
 # keys
-app/keys.tsx
+./app/keys.tsx

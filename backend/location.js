@@ -2,18 +2,20 @@
 import { Client } from "@googlemaps/google-maps-services-js";
 import { places_key } from "./key.js";
 
-const latitude = 37.4161493;
-const longitude = -122.0812166; // Mountain View, CA
+export const latitude = 37.4161493;
+export const longitude = -122.0812166;
 
-async function searchPlaces(latitude, longitude, query, type) {
+async function searchPlaces(query, type) {
   // const {Place} = await google.maps.importLibrary("places");
-  if (!latitude || !longitude || !query || !type) {
-      throw new Error('Missing required fields: latitude, longitude, query, type');
+  console.log(`Searching for ${query} of type ${type}`);
+  if (!query || !type) {
+      throw new Error('Missing required fields: query, type');
   }
 
   const client = new Client({});
 
   try {
+      console.log(`Searching for ${query} of type ${type}`);
       const response = await client.textSearch({
           params: {
               key: places_key,
@@ -26,13 +28,19 @@ async function searchPlaces(latitude, longitude, query, type) {
       });
 
       if (response.data.status === 'OK') {
-          return response.data.results.map(place => ({
+        
+          const results = response.data.results.slice(0, 5).map(place => ({
               name: place.name,
               location: place.geometry.location,
               address: place.formatted_address,
               rating: place.rating,
               types: place.types,
               placeId: place.place_id
+          }));
+          console.log('Search results:', results);
+          return results.map(place => ({
+              name: place.name,
+              address: place.address
           }));
       } else {
           throw new Error(`Place search failed. Status: ${response.data.status}`);
@@ -45,11 +53,9 @@ async function searchPlaces(latitude, longitude, query, type) {
 
 const query = 'swimming pools'
 const test = async () => {
-  const result = await searchPlaces(latitude, longitude, query, "establishment");
+  const result = await searchPlaces( query, "establishment");
   console.log(result);
 
 }
-
-test();
 export { searchPlaces };
 // module.exports = { searchPlaces };

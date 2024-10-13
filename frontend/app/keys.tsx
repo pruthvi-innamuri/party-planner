@@ -1,1 +1,2 @@
-export const openai_key = "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";
+
+

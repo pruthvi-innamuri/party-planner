@@ -32,9 +32,11 @@ type Event = {
 
 export default function PartyPlanningDashboard() {
   const [isAgentActive, setIsAgentActive] = useState(false)
+  const [imageUrl, setImageUrl] = useState('');
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const [spotifyPlaylistUrl, setSpotifyPlaylistUrl] = useState(false);
   const [guestList, setGuestList] = useState<Guest[]>([
     { name: 'Alice', email: 'alice@example.com' },
     { name: 'Bob', email: 'bob@example.com' },
@@ -42,7 +44,7 @@ export default function PartyPlanningDashboard() {
     { name: 'David', email: 'david@example.com' }
   ])
   const [newGuest, setNewGuest] = useState('')
-  const [venues] = useState<Venue[]>([
+  const [venues, setVenues] = useState<Venue[]>([
     { name: 'City Park', description: 'A spacious outdoor venue with beautiful greenery.' },
     { name: 'Beachside Resort', description: 'Luxurious resort with stunning ocean views.' },
     { name: 'Mountain Lodge', description: 'Cozy retreat nestled in the mountains.' },
@@ -89,7 +91,7 @@ export default function PartyPlanningDashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="flex justify-between items-center p-4 bg-white shadow-md">
           <h1 className="text-2xl font-bold">Party Planning Dashboard</h1>
-          <Button onClick={() => recordingHandler(mediaRecorderRef, streamRef, chunksRef, isAgentActive, setIsAgentActive)}>
+          <Button onClick={() => recordingHandler(mediaRecorderRef, streamRef, chunksRef, isAgentActive, setIsAgentActive, setVenues, setEvents, setGuestList, setImageUrl, setSpotifyPlaylistUrl)}>
             {isAgentActive ? 'Deactivate Agent' : 'Activate Agent'}
             <MessageCircle className="ml-2 h-4 w-4" />
           </Button>
@@ -102,10 +104,18 @@ export default function PartyPlanningDashboard() {
                 <CardTitle>Spotify Playlist</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                  <Music className="h-12 w-12 text-gray-400" />
-                  <span className="ml-2 text-gray-500">Embed Spotify playlist here</span>
-                </div>
+                {spotifyPlaylistUrl && (
+                  <iframe 
+                    style={{ borderRadius: '12px' }} 
+                    src="https://open.spotify.com/embed/playlist/09komIV6F03qoUmhBAQGQ3?utm_source=generator"
+                    width="100%" 
+                    height="352" 
+                    frameBorder="0" 
+                    allowFullScreen 
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy"
+                  ></iframe>
+                )}
               </CardContent>
             </Card>
 
@@ -117,9 +127,10 @@ export default function PartyPlanningDashboard() {
                 <div className="bg-gradient-to-r from-purple-400 to-pink-500 p-6 rounded-lg text-white text-center">
                   <h2 className="text-2xl font-bold mb-2">You're Invited!</h2>
                   <p className="mb-4">Join us for an unforgettable celebration</p>
-                  <p>Date: TBD</p>
+                  {/* <p>Date: TBD</p>
                   <p>Time: TBD</p>
-                  <p>Location: TBD</p>
+                  <p>Location: TBD</p> */}
+                  <img src={imageUrl} alt="Party Invitation" className="mt-4 rounded-lg w-full h-auto" />
                 </div>
               </CardContent>
             </Card>

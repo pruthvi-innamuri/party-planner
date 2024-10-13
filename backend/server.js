@@ -1,28 +1,33 @@
-import express from 'express'; // Use 'import' instead of 'require'
-import { handleUserQuery } from './conversation/routing.js'; // Ensure relative path is correct
+import express from 'express';
+import cors from 'cors'; // Import the cors package
+import { handleUserQuery } from './conversation/routing.js';
 
 const app = express();
 const PORT = 3001;
 
-app.use(express.json()); // Middleware to parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded bodies
+// Enable CORS for all routes
+app.use(cors());
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.post('/plan-party', async (req, res) => {
-  const { text } = req.body;
+  const { transcription } = req.body; // Change 'text' to 'transcription' to match the frontend
+  console.log(transcription);
   
-  if (!text) {
-    return res.status(400).json({ error: 'No text input received' });
+  if (!transcription) {
+    return res.status(400).json({ error: 'No transcription received' });
   }
 
   try {
-    // Call handleUserQuery function from imported module
-    const response = await handleUserQuery(text);
-    
-    res.json({
-      message: 'Text input received successfully',
-      inputText: text,
-      response
+    const response = await handleUserQuery(transcription);
+    console.log(response.result);
+    return res.json({
+      success: true,
+      message: 'Transcription processed successfully',
+      inputTranscription: transcription,
+      result: response
     });
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error', details: error.message });
@@ -35,5 +40,5 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Text input can be posted to http://localhost:${PORT}/plan-party`);
+  console.log(`Transcriptions can be posted to http://localhost:${PORT}/plan-party`);
 });

@@ -1,7 +1,10 @@
 import { openai_key } from '../key.js';
 import { functions } from './functions.js';
 import OpenAI from "openai";
-
+import { addToPlaylist } from '../spotify.js';
+import { searchPlaces } from '../location.js';
+import { generateTheme } from '../theme.js';
+import { generatePartyEvents } from '../timeline.js';
 const openai = new OpenAI({ apiKey: openai_key });
 
 export async function handleUserQuery(userQuery) {
@@ -27,16 +30,15 @@ export async function handleUserQuery(userQuery) {
 
             // Handle the function call accordingly
             switch (functionName) {
-                case 'parse_party_description':
-                    return handleParsePartyDescription(parsedArgs);
                 case 'generateTheme':
-                    return handleGenerateTheme(parsedArgs);
+                    return {"result": await generateTheme(parsedArgs.themeDescription), "name": "generateTheme"};
                 case 'addToPlaylist':
-                    return handleAddToPlaylist(parsedArgs);
-                case 'generate_events':
-                    return handleGenerateEvents(parsedArgs);
+                    return await addToPlaylist(parsedArgs);
+                case 'generatePartyEvents':
+                    console.log('Generating events in routing');
+                    return {"result": await generatePartyEvents(parsedArgs.description), "name": "generatePartyEvents"};
                 case 'search_places':
-                    return handleSearchPlaces(parsedArgs);
+                    return {"result": await searchPlaces(parsedArgs.query, parsedArgs.type), "name": "search_places"};
                 default:
                     console.error('Unknown function called.');
                     return null;
@@ -51,11 +53,6 @@ export async function handleUserQuery(userQuery) {
         return null;
     }
 }
-
-(async () => {
-  const response = await handleUserQuery("I want to plan a party for my friend's birthday. Can you help me with the planning? I want it for tomorrow noon with 10 guests and the theme is back to school. We should have spikeball and lunch. let's do it at dolores park.");
-  console.log(response);
-})();
 
 async function callFunctions(toolCalls) {
     const results = [];

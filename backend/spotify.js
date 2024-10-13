@@ -41,7 +41,7 @@ async function addTracksToPlaylist(accessToken, playlistId, trackUris) {
 }
 
 // Main function to execute the flow
-async function addToPlaylist(query) {
+export async function addToPlaylist(query) {
     const playlistId = '09komIV6F03qoUmhBAQGQ3'; // Replace with your existing playlist ID
     try {
         const accessToken = "BQCxR_-qjLCaBdo3CHbccvNBN3qtGM53VIecjp6PBN67bCCFxPGkzNOATPvgjn3dWBq35XPvFj3L09kvg6Dj56EvUU37AfE5Hq1eNTL70TLVKC3_ZDKvYOuKvuJo3se-JXXoQJ9hfvDCKfaTLA575UyDppghDxZ_N34lV2_KXFi0rkoe0JGa2Z-yMdlCs6UytMbu3p3hzYBW5YBFoxg4LbGsJJzC72MXboYrcj07wwPueuW1dkA7xDnwxlA";
@@ -62,5 +62,3 @@ async function addToPlaylist(query) {
     }
 }
 
-// Execute the function with a sample query
-addToPlaylist("rock");
